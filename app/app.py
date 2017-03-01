@@ -4,6 +4,7 @@ Main app module
 from flask import Flask, render_template
 
 from app.config import ProdConfig
+from app.customer import blueprint as customer_blueprint
 from app.extensions import db, login_manager
 
 
@@ -22,7 +23,7 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    pass
+    app.register_blueprint(customer_blueprint)
 
 
 def register_error_handlers(app):
