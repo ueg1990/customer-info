@@ -6,7 +6,7 @@ from flask import Flask, render_template
 from app.config import ProdConfig
 from app.customer import blueprint as customer_blueprint
 from app.public import blueprint as public_blueprint
-from app.extensions import db, login_manager
+from app.extensions import db
 
 
 def create_app(config_object=ProdConfig):
@@ -20,7 +20,6 @@ def create_app(config_object=ProdConfig):
 
 def register_extensions(app):
     db.init_app(app)
-    login_manager.init_app(app)
 
 
 def register_blueprints(app):
