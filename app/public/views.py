@@ -9,20 +9,9 @@ ADMIN_PASSWORD_HASH = os.environ['CUSTOMER_INFO_ADMIN_PASSWORD_HASH']
 blueprint = Blueprint('public', __name__)
 
 
-@blueprint.route('/')
+@blueprint.route('/', methods=['GET', 'POST'])
 def home():
-    """Return Home Page"""
-    return render_template('public/index.html')
-
-
-def _validate_credentials(username, password):
-    return (username == ADMIN_USERNAME and
-            check_password_hash(ADMIN_PASSWORD_HASH, password))
-
-
-@blueprint.route('/login', methods=['GET', 'POST'])
-def login():
-    """Return Login page"""
+    """Return Home Page (also contains Login form)"""
     error = None
     if request.method == 'POST':
         username = request.form['username']
@@ -32,10 +21,16 @@ def login():
             return redirect(url_for('customer/index.html'))
         else:
             error = 'Invalid username or password'
-    return render_template('public/login.html', error=error)
+    return render_template('public/index.html', error=None)
+
+
+def _validate_credentials(username, password):
+    return (username == ADMIN_USERNAME and
+            check_password_hash(ADMIN_PASSWORD_HASH, password))
 
 
 @blueprint.route('/logout')
+@login_required
 def logout():
     session.pop('logged_in', None)
     return redirect(url_for('home'))
