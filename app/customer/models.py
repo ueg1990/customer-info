@@ -20,8 +20,8 @@ class Customer(db.Model):
         self.email = email
         self.phone_number = phone_number
         self.address = address
-        self.last_order = order
+        self.last_order = last_order
         self.send_email = send_email
 
     def __repr__(self):
-        return '<Cusomter {!r} {!r}>'.format(self.first_name, self.last_name)
+        return '<Customer {} {}>'.format(self.first_name, self.last_name)

@@ -1,7 +1,48 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <div class="row">
+  <table class="table table-striped table-bordered">
+    <tbody>
+      <tr>
+        <td>First Name</td>
+        <td>{{ customer.first_name }}</td>
+      </tr>
+      <tr>
+        <td>Last Name</td>
+        <td>{{ customer.last_name }}</td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td>{{ customer.email }}</td>
+      </tr>
+      <tr>
+        <td>Phone Number</td>
+        <td>{{ customer.phone_number }}</td>
+      </tr>
+      <tr>
+        <td>Address</td>
+        <td>{{ customer.address }}</td>
+      </tr>
+      <tr>
+        <td>Last Order</td>
+        <td>{{ customer.last_order }}</td>
+      </tr>
+      <tr>
+        <td>Send Email</td>
+        {% if customer.send_email %}
+            <td>Yes</td>
+        {% else %}
+        	<td>No</td>
+        {% endif %}
+      </tr>
+    </tbody>
+  </table>
+ <form action="/customer/{{ customer.id }}" method="post" class="form-inline">
+  {{ form.hidden_tag() }}
+  {{form.update(class_="btn btn-primary btn-submit")}}
+  {{form.delete(class_="btn btn-danger btn-submit")}}
+  {{form.customer_id(value=customer.id)}}
 
-  </div>
+ </form>
+
 {% endblock %}

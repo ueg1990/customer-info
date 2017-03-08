@@ -1,7 +1,7 @@
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, redirect, render_template, request, url_for
 
 
-from app.customer.forms import CustomerSearchForm, NewCustomerForm
+from app.customer.forms import CustomerSearchForm, NewCustomerForm, UpdateDeleteForm
 from app.customer.models import Customer
 from app.decorators import login_required
 
@@ -28,18 +28,28 @@ def home():
 @login_required
 def customers():
     """List customers."""
-    return render_template('customer/index.html')
+    customers = Customer.query.all()
+    return render_template('customer/customers.html', customers=customers)
 
 
-@blueprint.route('/customer/<int:customer_id>')
+@blueprint.route('/<int:customer_id>', methods=('GET', 'POST'))
 @login_required
 def customer(customer_id):
     """Get customer by id"""
     customer = Customer.query.get(customer_id)
-    return render_template('customer/index.html')
+    form = UpdateDeleteForm()
+    if form.validate_on_submit():
+        if form.update.data:
+            print('update')
+        else:
+            print('delete')
+            db.session.delete(customer)
+            db.session.commit()
+            return redirect(url_for('customer.home'))
+    return render_template('customer/customer.html', customer=customer, form=form)
 
 
-@blueprint.route('/customer', methods=('GET', 'POST'))
+@blueprint.route('/add', methods=('GET', 'POST'))
 @login_required
 def add_customer():
     """Add new customer"""
@@ -51,4 +61,4 @@ def add_customer():
         db.session.add(customer)
         db.session.commit()
         return render_template('customer/customer.html', customer=customer)
-    return render_template('customer/index.html', form=form)
+    return render_template('customer/customer_form.html', form=form)
