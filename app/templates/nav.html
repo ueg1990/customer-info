@@ -3,22 +3,17 @@
     <nav>
       {% if session['logged_in'] %}
         <ul class="nav nav-pills pull-right">
-          <!-- <li role="presentation"><a href="{{ url_for('customer.home') }}">Search</a></li> -->
           <li class="dropdown" role="presentation">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Actions<span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a href="{{ url_for('customer.home') }}">Search</a></li>
               <li><a href="{{ url_for('customer.add_customer') }}">Add Customer</a></li>
+              <li><a href="{{ url_for('customer.customers') }}">All Customers</a></li>
             </ul>
           </li>
           <li role="presentation"><a href="{{ url_for('public.logout') }}">Log Out</a></li>
         </ul>
       {% endif %}
-      <!-- <ul class="nav nav-pills pull-right">
-        <li role="presentation" class="active"><a href="#">Home</a></li>
-        <li role="presentation"><a href="#">About</a></li>
-        <li role="presentation"><a href="#">Contact</a></li>
-      </ul> -->
     </nav>
     <h3 class="text-muted"><a href="{{ url_for('customer.home') }}" style="text-decoration: none">Project name</a></h3>
 </div>

@@ -5,6 +5,9 @@
   <div class="col-lg-3"></div>
   <div class="col-lg-6">
   <form action="{{ url_for('customer.home') }}" method="post">
+      {% if error %}
+        <p style="color:red;">{{ error }}</p>
+      {% endif %}
     <div class="input-group">
   		{{ form.hidden_tag() }}
       {{form.phone_number(placeholder="Phone Number", class_="form-control")}}

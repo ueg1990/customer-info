@@ -23,3 +23,7 @@ class UpdateDeleteForm(Form):
     update = SubmitField('Update Customer')
     delete = SubmitField('Delete Customer')
     customer_id = HiddenField()
+
+
+class UpdateCustomerForm(NewCustomerForm):
+    pass

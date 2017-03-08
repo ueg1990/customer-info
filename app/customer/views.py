@@ -1,7 +1,9 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
 
-from app.customer.forms import CustomerSearchForm, NewCustomerForm, UpdateDeleteForm
+from app.extensions import db
+from app.customer.forms import (CustomerSearchForm, NewCustomerForm, UpdateDeleteForm,
+                                UpdateCustomerForm)
 from app.customer.models import Customer
 from app.decorators import login_required
 
@@ -18,9 +20,10 @@ def home():
         phone_number = form.phone_number.data
         customer = Customer.query.filter_by(phone_number=phone_number).first()
         if customer:
-            return render_template('customer/customer.html', customer=customer)
+            return redirect(url_for('customer.customer', customer_id=customer.id))
         else:
             error = 'Customer with phone number {} not found'.format(phone_number)
+    form.phone_number.data = ''
     return render_template('customer/index.html', form=form, error=error)
 
 
@@ -40,9 +43,8 @@ def customer(customer_id):
     form = UpdateDeleteForm()
     if form.validate_on_submit():
         if form.update.data:
-            print('update')
+            return redirect(url_for('customer.update_customer', customer_id=customer.id))
         else:
-            print('delete')
             db.session.delete(customer)
             db.session.commit()
             return redirect(url_for('customer.home'))
@@ -57,8 +59,24 @@ def add_customer():
     if form.validate_on_submit():
         customer = Customer(form.first_name.data, form.last_name.data, form.email.data,
                             form.phone_number.data, form.address.data, form.last_order.data,
-                            form.send_emai.data)
+                            form.send_email.data)
         db.session.add(customer)
         db.session.commit()
-        return render_template('customer/customer.html', customer=customer)
-    return render_template('customer/customer_form.html', form=form)
+        return redirect(url_for('customer.customer', customer_id=customer.id))
+    return render_template('customer/customer_form.html',
+                           form=form, form_action=url_for('customer.add_customer'))
+
+
+@blueprint.route('/update/<int:customer_id>', methods=('GET', 'POST'))
+@login_required
+def update_customer(customer_id):
+    """Update given customer"""
+    customer = Customer.query.get(customer_id)
+    form = UpdateCustomerForm(obj=customer)
+    if form.validate_on_submit():
+        form.populate_obj(customer)
+        db.session.commit()
+        return redirect(url_for('customer.customer', customer_id=customer.id))
+    return render_template('customer/customer_form.html', form=form,
+                            form_action=url_for('customer.update_customer',
+                            customer_id=customer.id))
