@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, render_template, request, url_for
+from sqlalchemy.exc import IntegrityError
 
 
 from app.extensions import db
@@ -55,16 +56,23 @@ def customer(customer_id):
 @login_required
 def add_customer():
     """Add new customer"""
+    error_dict = {}
     form = NewCustomerForm()
     if form.validate_on_submit():
         customer = Customer(form.first_name.data, form.last_name.data, form.email.data,
                             form.phone_number.data, form.address.data, form.last_order.data,
                             form.send_email.data)
-        db.session.add(customer)
-        db.session.commit()
-        return redirect(url_for('customer.customer', customer_id=customer.id))
-    return render_template('customer/customer_form.html',
-                           form=form, form_action=url_for('customer.add_customer'))
+        customer_exists = Customer.query.filter((Customer.phone_number == customer.phone_number) |
+                                                (Customer.email == customer.email)).first()
+        if customer_exists:
+            error_dict['error'] = 'Customer with given email or phone number already exists.'
+            error_dict['customer_id'] = customer_exists.id
+        else:
+            db.session.add(customer)
+            db.session.commit()
+            return redirect(url_for('customer.customer', customer_id=customer.id))
+    return render_template('customer/customer_form.html', form=form,
+                           form_action=url_for('customer.add_customer'), error_dict=error_dict)
 
 
 @blueprint.route('/update/<int:customer_id>', methods=('GET', 'POST'))

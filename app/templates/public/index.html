@@ -1,15 +1,15 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <form class="form-signin" action="{{ url_for('public.home') }}" method="post">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <label for="username" class="sr-only">Username</label>
-        <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
-        <label for="password" class="sr-only">Password</label>
-        <input type="password" name="password" class="form-control" placeholder="Password" required>
-        <input class="btn btn-lg btn-primary btn-block" type="submit" value="Submit">
-        {% if error %}
-    		<p style="color:red;">Boo hoo!: {{ error }}</p>
-    	{% endif %}
-    </form>
+	<form class="form-signin" action="{{ url_for('public.home') }}" method="post">
+		<h2 class="form-signin-heading">Please sign in</h2>
+		<label for="username" class="sr-only">Username</label>
+		<input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+		<label for="password" class="sr-only">Password</label>
+		<input type="password" name="password" class="form-control" placeholder="Password" required>
+		<input class="btn btn-lg btn-primary btn-block" type="submit" value="Submit">
+		{% if error %}
+			<p style="color:red;">{{ error }}</p>
+		{% endif %}
+	</form>
 {% endblock %}

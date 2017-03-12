@@ -3,34 +3,37 @@
 {% block content %}
 <h1>Add Customer</h1>
   <form action="{{ form_action }}" method="post">
-      {{ form.hidden_tag() }}
-      <div class="form-group">
-          {{form.first_name.label}}
-          {{form.first_name(placeholder="First Name", class_="form-control")}}
-      </div>
-      <div class="form-group">
-          {{form.last_name.label}}
-          {{form.last_name(placeholder="Last Name", class_="form-control")}}
-      </div>
-      <div class="form-group">
-          {{form.email.label}}
-          {{form.email(placeholder="Email", class_="form-control")}}
-      </div>
-      <div class="form-group">
-          {{form.phone_number.label}}
-          {{form.phone_number(placeholder="Phone Number", class_="form-control")}}
-      </div>
-      <div class="form-group">
-          {{form.address.label}}
-          {{form.address(placeholder="Address", class_="form-control")}}
-      </div>
-      <div class="form-group">
-          {{form.last_order.label}}
-          {{form.last_order(placeholder="Last Order", class_="form-control")}}
-      </div>
-      <div class="form-inline">
-          {{form.send_email(class_="checkbox")}} {{form.send_email.label}}
-      </div>
-      <p><input class="btn btn-primary btn-submit" type="submit" value="Submit"></p>
+	{% if error_dict %}
+		<p style="color:red;">{{ error_dict['error'] }} <a href="{{ url_for('customer.customer', customer_id=error_dict['customer_id']) }}"> Click here</a></p>
+	{% endif %}
+	{{ form.hidden_tag() }}
+	<div class="form-group">
+		{{form.first_name.label}}
+		{{form.first_name(placeholder="First Name", class_="form-control")}}
+	</div>
+	<div class="form-group">
+	  {{form.last_name.label}}
+	  {{form.last_name(placeholder="Last Name", class_="form-control")}}
+	</div>
+	<div class="form-group">
+	  {{form.email.label}}
+	  {{form.email(placeholder="Email", class_="form-control")}}
+	</div>
+	<div class="form-group">
+	  {{form.phone_number.label}}
+	  {{form.phone_number(placeholder="Phone Number", class_="form-control")}}
+	</div>
+	<div class="form-group">
+	  {{form.address.label}}
+	  {{form.address(placeholder="Address", class_="form-control")}}
+	</div>
+	<div class="form-group">
+	  {{form.last_order.label}}
+	  {{form.last_order(placeholder="Last Order", class_="form-control")}}
+	</div>
+	<div class="form-inline">
+	  {{form.send_email(class_="checkbox")}} {{form.send_email.label}}
+	</div>
+	<p><input class="btn btn-primary btn-submit" type="submit" value="Submit"></p>
   </form>
 {% endblock %}
