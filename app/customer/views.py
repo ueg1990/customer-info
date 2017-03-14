@@ -5,6 +5,8 @@ from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.customer.forms import (CustomerSearchForm, NewCustomerForm, UpdateDeleteForm,
                                 UpdateCustomerForm)
+from app.customer.mailchimp import (add_member_to_subscription_list,
+                                    remove_member_from_subscription_list)
 from app.customer.models import Customer
 from app.decorators import login_required
 
@@ -46,6 +48,8 @@ def customer(customer_id):
         if form.update.data:
             return redirect(url_for('customer.update_customer', customer_id=customer.id))
         else:
+            if customer.send_email:
+                remove_member_from_subscription_list(customer.mailchimp_member_id)
             db.session.delete(customer)
             db.session.commit()
             return redirect(url_for('customer.home'))
@@ -68,6 +72,9 @@ def add_customer():
             error_dict['error'] = 'Customer with given email or phone number already exists.'
             error_dict['customer_id'] = customer_exists.id
         else:
+            if customer.send_email:
+                mailchimp_member_id = add_member_to_subscription_list(customer.email)
+                customer.mailchimp_member_id = mailchimp_member_id
             db.session.add(customer)
             db.session.commit()
             return redirect(url_for('customer.customer', customer_id=customer.id))
@@ -80,11 +87,23 @@ def add_customer():
 def update_customer(customer_id):
     """Update given customer"""
     customer = Customer.query.get(customer_id)
+    current_send_email_status = customer.send_email
     form = UpdateCustomerForm(obj=customer)
     if form.validate_on_submit():
         form.populate_obj(customer)
+        if current_send_email_status != form.send_email.data:
+            _update_customer_email_subscription(customer, form.send_email.data)
         db.session.commit()
         return redirect(url_for('customer.customer', customer_id=customer.id))
     return render_template('customer/customer_form.html', form=form,
                             form_action=url_for('customer.update_customer',
                             customer_id=customer.id))
+
+
+def _update_customer_email_subscription(customer, send_email):
+    if send_email:
+        mailchimp_member_id = add_member_to_subscription_list(customer.email)
+        customer.mailchimp_member_id = mailchimp_member_id
+    else:
+        remove_member_from_subscription_list(customer.mailchimp_member_id)
+        customer.mailchimp_member_id = None

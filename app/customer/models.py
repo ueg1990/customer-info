@@ -12,9 +12,10 @@ class Customer(db.Model):
     address = db.Column(db.Text)
     last_order = db.Column(db.Text)
     send_email = db.Column(db.Boolean)
+    mailchimp_member_id = db.Column(db.String(32))
 
     def __init__(self, first_name, last_name, email, phone_number, address,
-                 last_order, send_email):
+                 last_order, send_email=False, mailchimp_member_id=None):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
@@ -22,6 +23,7 @@ class Customer(db.Model):
         self.address = address
         self.last_order = last_order
         self.send_email = send_email
+        self.mailchimp_member_id = mailchimp_member_id
 
     def __repr__(self):
         return '<Customer {} {}>'.format(self.first_name, self.last_name)

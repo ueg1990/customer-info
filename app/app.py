@@ -15,6 +15,9 @@ def create_app(config_object=ProdConfig):
     register_extensions(app)
     register_blueprints(app)
     register_error_handlers(app)
+    if config_object.DEBUG:
+        with app.app_context():
+            db.create_all()
     return app
 
 
