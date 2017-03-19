@@ -1,6 +1,9 @@
 """
 Main app module
 """
+import logging
+import sys
+
 from flask import Flask, render_template
 
 from app.config import ProdConfig
@@ -15,6 +18,7 @@ def create_app(config_object=ProdConfig):
     register_extensions(app)
     register_blueprints(app)
     register_error_handlers(app)
+    setup_logging(app)
     if config_object.DEBUG:
         with app.app_context():
             db.create_all()
@@ -39,3 +43,8 @@ def register_error_handlers(app):
         return render_template('errors/{0}.html'.format(error_code)), error_code
     for errcode in [401, 404, 500]:
         app.errorhandler(errcode)(render_error)
+
+
+def setup_logging(app):
+    app.logger.addHandler(logging.StreamHandler(sys.stdout))
+    app.logger.setLevel(logging.INFO)
